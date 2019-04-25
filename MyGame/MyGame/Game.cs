@@ -9,6 +9,14 @@ using System.Drawing;
 
 namespace MyGame
 {
+    class GameObjectException : Exception
+    {
+        public GameObjectException(string message)
+            : base(message)
+        {
+        }
+    }
+
     static class Game
     {
 
@@ -16,9 +24,24 @@ namespace MyGame
         private static Asteroid[] _asteroids;
         public static void Load()
         {
-            _objs = new BaseObject[30];
-            _bullet = new Bullet(new Point(0, 400), new Point(5, 0), new Size(8, 3));
-            _asteroids = new Asteroid[30];
+            try
+            {
+                int x = 0;
+                int y = 400;
+                _objs = new BaseObject[30];
+                _bullet = new Bullet(new Point(x, y), new Point(5, 0), new Size(8, 3));
+                _asteroids = new Asteroid[30];
+
+                if (x <0) throw new GameObjectException("Отрицательная позиция по х");
+                if (y > 500) throw new GameObjectException("Неверная позиция по y");
+            }
+
+            catch (GameObjectException e)
+            {
+                Console.WriteLine("Error: {0}", e.Message);
+            }
+
+
             var rnd = new Random();
             for (var i = 0; i < _objs.Length; i++)
             {
@@ -31,7 +54,6 @@ namespace MyGame
                 _asteroids[i] = new Asteroid(new Point(1000, rnd.Next(0, Game.Height)), new Point(-r / 5, r), new Size(r, r));
             }
         }
-
 
         private static BufferedGraphicsContext _context;
         public static BufferedGraphics Buffer;
@@ -70,12 +92,33 @@ namespace MyGame
             g = form.CreateGraphics();
             // Создаем объект (поверхность рисования) и связываем его с формой
             // Запоминаем размеры формы
-            Width = form.ClientSize.Width;
-            Height = form.ClientSize.Height;
+            try
+            {
+                Width = form.ClientSize.Width;
+                Height = form.ClientSize.Height;
+
+            if (Width>1000 || Height>1000 || Width<0 || Height<0)
+            {
+               throw new ArgumentOutOfRangeException("Размер экрана вне диапазона", "Размер экрана должен быть больше нуля и меньше 1000");
+            }
+
+            }
+
+            catch (ArgumentOutOfRangeException outOfRange)
+            {
+                //Console.WriteLine("ArgumentOutOfRangeException!");
+                Console.WriteLine("Error: {0}", outOfRange.Message);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             // Связываем буфер в памяти с графическим объектом, чтобы рисовать в буфере
             Buffer = _context.Allocate(g, new Rectangle(0, 0, Width, Height));
             Load();
         }
+
         public static void Draw()
         {
             Buffer.Graphics.Clear(Color.Black);
@@ -96,8 +139,7 @@ namespace MyGame
                 a.Update();
                 if (a.Collision(_bullet))
                 {
-                    System.Media.SystemSounds.Hand.Play();
-                    //_bullet = new Bullet(new Point(0, 400), new Point(5, 0), new Size(8, 3));
+                    System.Media.SystemSounds.Hand.Play();                    
                     a.DrawCollision();
                     _bullet.DrawCollision();
                 }
