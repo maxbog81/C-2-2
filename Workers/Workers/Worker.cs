@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Workers
 {
-    abstract class Worker
+    abstract class Worker:IComparable
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -23,6 +24,16 @@ namespace Workers
             Rate = rate;
         }
 
+        /// <summary>
+        /// Сортировка по оплате
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public int CompareTo(object obj)
+        {
+            var over = obj as Worker;
+            return this.Salary < over.Salary ? -1 : 1;
+        }
 
         public override string ToString()
         {

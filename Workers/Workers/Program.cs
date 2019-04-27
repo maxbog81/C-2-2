@@ -35,7 +35,8 @@ namespace Workers
 
         static void Main(string[] args)
         {
-            Worker[] workers=new Worker[6];
+            //через массив и перегрузку метода String
+            Worker[] workers = new Worker[6];
             workers[0] = new WorkerHourlyRate(1, "Андрей", 400);
             workers[1] = new WorkerHourlyRate(2, "Николай", 300);
             workers[2] = new WorkerHourlyRate(3, "Максим", 500);
@@ -59,7 +60,28 @@ namespace Workers
 
             }
 
+            //через лист и интерфейсы
+            Random r = new Random();
+            List<Worker> ListWorkers = new List<Worker>();
 
-            Console.ReadKey();        }
+            for (int i = 0; i < 5; i++)
+            {
+                ListWorkers.Add(new WorkerHourlyRate(i, $"Имя_{i}", r.Next(300, 500)));                
+            }
+
+            for (int i = 5; i < 10; i++)
+            {
+                ListWorkers.Add(new WorkerFixedRate(i, $"Имя_{i}", r.Next(30000, 100000)));
+            }
+
+            ListWorkers.Sort();
+
+            Department dept = new Department(ListWorkers);
+            Console.WriteLine("\nСортировка по зарплате:");
+            foreach (var item in dept)
+                Console.WriteLine(item);
+
+            Console.ReadKey();
+        }
     }
 }

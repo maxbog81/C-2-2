@@ -22,7 +22,7 @@ namespace Workers
         }
         public override string ToString()
         {
-            return string.Format("Работник с почасовой ставкой {0}", base.ToString());
+            return $"Работник с почасовой ставкой {base.ToString()}";
         }
     }
 }

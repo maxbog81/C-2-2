@@ -20,7 +20,7 @@ namespace Workers
         }
         public override string ToString()
         {
-            return string.Format("Работник с фиксированной ставкой {0}", base.ToString());
+            return $"Работник с фиксированной ставкой {base.ToString()}";
         }
     }
 }
